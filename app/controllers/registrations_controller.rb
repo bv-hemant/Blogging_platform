@@ -1,22 +1,23 @@
 class RegistrationsController < ApplicationController 
+    
     def index
     end
 
-    def sighnin
-        
+    def sighnin        
     end
 
     def validateuser
         user = User.find_by(email: params[:email])
         if user.present? && user.authenticate(params[:password])
-            session[:user_id]=user.id
+            session[:user_id] = user.id
             #redirect_to user_blogs_path @user
             redirect_to blogs_path
         else
-            flash[:alert]="Invalid Email or Password"
+            flash[:alert] = "Invalid Email or Password"
             render :sighnin
         end
     end
+
     def new
         @user = User.new
     end

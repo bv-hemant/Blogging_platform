@@ -35,7 +35,6 @@ class BlogsController < ApplicationController
             @blog = @user.blogs.find_by(id:params[:id])
     end
     #@blog = Blog.find(params[:id])
-    
   end
     
     def update
