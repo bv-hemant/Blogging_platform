@@ -3,12 +3,14 @@
 
   <p><%= @blog.body %></p>
 
-  <ul>
-    <li><%= link_to "Edit", edit_blog_path(@blog) %></li>
-    <li><%= link_to "Destroy", @blog,
-      method: :delete,
-      data: { confirm: "Are you sure?" } %></li>
-  </ul>
+  <% if Current.user && Current.user.id == @blog.user_id %>
+    <ul>
+      <li><%= link_to "Edit", edit_blog_path(@blog) %></li>
+      <li><%= link_to "Destroy", @blog,
+        method: :delete,
+        data: { confirm: "Are you sure?" } %></li>
+    </ul>
+  <% end %>
 <% else %>
   <h4>Blog does not exists</h4>
 <% end %>

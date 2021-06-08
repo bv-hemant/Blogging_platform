@@ -9,9 +9,10 @@ class RegistrationsController < ApplicationController
   def validateuser
     user = User.where(email: params[:email])
 
-    if user 
-      if  user.first.present? && user.first.authenticate(params[:password])
-        session[:user_id] = user.first.id
+    if user
+      user = user.first 
+      if  user.present? && user.authenticate(params[:password])
+        session[:user_id] = user.id
         flash[:alert] = nil
         redirect_to blogs_path
       else
