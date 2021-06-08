@@ -1,0 +1,27 @@
+<% if @blog %>
+<h1>Edit Blog</h1>
+
+<%= form_with model: @blog do |form| %>
+  <div>
+    <%= form.label :title %><br>
+    <%= form.text_field :title %>
+    <% @blog.errors.full_messages_for(:title).each do |message| %>
+    <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <%= form.label :body %><br>
+    <%= form.text_area :body %>
+    <% @blog.errors.full_messages_for(:body).each do |message| %>
+    <div><%= message %></div>
+    <% end %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
+<% else %>
+<h4> you can't edit anyone's blog</h4> 
+<%end%>

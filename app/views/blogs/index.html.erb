@@ -1,0 +1,11 @@
+<h1>Blogs</h1>
+<%if @user %>
+    <ul>
+        <% @blog.each do |blog| %>
+        <li>
+        <%= link_to blog.title, blog %>
+        </li>
+        <% end %>
+    </ul>
+    <%= link_to "New blog", new_blog_path %>
+  <% end %>
