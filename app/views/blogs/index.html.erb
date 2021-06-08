@@ -1,12 +1,14 @@
 <h1>Blogs</h1>
-
+<%= link_to "Sign out", sign_out_path,
+  method: :delete,
+  data: { confirm: "Are you sure?" }  %>
 <%if @user %>
-    <ul>
-        <% @blog.each do |blog| %>
-        <li>
+  <ul>
+    <% @blog.each do |blog| %>
+      <li>
         <%= link_to blog.title, blog %>
-        </li>
-        <% end %>
-    </ul>
-    <%= link_to "New blog", new_blog_path %>
+      </li>
+    <% end %>
+  </ul>
+  <%= link_to "New blog", new_blog_path %>
 <% end %>

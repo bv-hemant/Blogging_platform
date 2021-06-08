@@ -1,72 +1,89 @@
 class BlogsController < ApplicationController 
-    def index
-        #@user = User.find_by(id:params[:user_id])
-        if(session[:user_id])
-            @user = User.find_by(id:session[:user_id])
-            @blog = @user.blogs.all
-        end
+  def index
+    #@user = User.find_by(id:params[:user_id])
+    if(session[:user_id])
+      @user = User.where(id: session[:user_id])
+      if @user
+        @blog = @user.first.blogs.all
+      end
     end
+  end
 
-    def show
-        @blog=Blog.find_by(id: params[:id])
+  def show
+    blogs=Blog.where(id: params[:id])
+    if blogs
+      @blog=blogs.first
+    else
+      flash[:alert]="No blogs"
+      render :index 
     end
+  end
 
-    def new
-      @blog = Blog.new
+  def new
+    @blog = Blog.new
+  end
+
+  def create
+    if session[:user_id]
+      @user = User.where(id: session[:user_id])
+      if @user
+        @blog = @user.first.blogs.new(blog_params)
+      end
+
+      if @blog.save
+        redirect_to @blog
+      else
+        render :new
+      end
     end
-
-    def create
-        if(session[:user_id])
-            @user = User.find_by(id:session[:user_id])
-            @blog = @user.blogs.new(blog_params)
-
-            if @blog.save
-                redirect_to @blog
-            end
-      #redirect_to user_blogs_path
-        else
-          render :new
-        end
-    end
+  end
 
     def edit
-        if(session[:user_id])
-            @user = User.find_by(id:session[:user_id])
-            @blog = @user.blogs.find_by(id:params[:id])
-    end
-    #@blog = Blog.find(params[:id])
-  end
-    
-    def update
-        @user = User.find_by(id:session[:user_id])
-        @blog = @user.blogs.find_by(id:params[:id])
-
-        if !@blog.nil? && @blog.update(blog_params)
-            redirect_to @blog
-        #redirect_to user_blog_path
-        else
-            render :edit
+      if session[:user_id]
+        @user = User.where(id: session[:user_id])
+        if @user
+          blog = @user.first.blogs.where(id: params[:id])
+          if blog
+            @blog = blog.first
+          end
         end
+      end
+    end
+
+    def update
+      @user = User.where(id: session[:user_id])
+      if @user 
+        blog = @user.first.blogs.where(id: params[:id])
+        if blog
+          @blog=blog.first
+        end
+      end
+      if !@blog.nil? && @blog.update(blog_params)
+        redirect_to @blog
+      else
+        render :edit
+      end
     end
 
     def destroy
-        @user = User.find_by(id:session[:user_id])
-        @blog = @user.blogs.find_by(id:params[:id])
-        if !@blog.nil?
-            @blog.destroy
-            redirect_to blogs_path
-        else
-            redirect_to Blog.find_by(id: params[:id])
+      @user = User.where(id: session[:user_id])
+      if @user
+        blog = @user.first.blogs.where(id: params[:id])
+        if blog
+          @blog=blog.first
         end
+        if !@blog.nil?
+          @blog.destroy
+          redirect_to blogs_path
+        else
+          redirect_to Blog.find_by(id: params[:id])
+        end
+      end
     end
 
     private
 
     def blog_params
-        params.require(:blog).permit(:title, :body)
+      params.require(:blog).permit(:title, :body)
     end
-    
-    def get_blog(id)
-        @blog = Blog.find(id)
-    end
-end
+  end
