@@ -7,10 +7,9 @@ class RegistrationsController < ApplicationController
   end
 
   def validateuser
-    user = User.where(email: params[:email])
+    user = User.where(email: params[:email]).first
 
-    if user
-      user = user.first 
+    if user 
       if  user.present? && user.authenticate(params[:password])
         session[:user_id] = user.id
         flash[:alert] = nil

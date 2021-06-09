@@ -7,7 +7,7 @@ class BlogsController < ApplicationController
     if !Current.user.nil?
       @blog = Current.user.blogs.all
     else 
-      redirect_to sign_in_path
+      log_in
     end
   end
 
@@ -23,67 +23,67 @@ class BlogsController < ApplicationController
     if Current.user
       @blog = Blog.new
     else 
-      redirect_to sign_in_path
+      log_in
     end
   end
 
-    def create
-      if Current.user
-        @blog = Current.user.blogs.new(blog_params)
+  def create
+    if Current.user
+      @blog = Current.user.blogs.new(blog_params)
 
-        if @blog.save
-          redirect_to @blog
-        else
-          render :new
-        end
+      if @blog.save
+        redirect_to @blog
       else
-        redirect_to sign_in_path
+        render :new
       end
-    end
-
-    def edit
-      if Current.user
-        blog = Current.user.blogs.where(id: params[:id]).first
-        if @blog.nil?
-          redirect_to root_path
-        end
-      else
-        redirect_to sign_in_path  
-      end
-    end
-
-    def update
-      if Current.user
-        @blog = Current.user.blogs.where(id: params[:id]).first
-          if !@blog.nil? && @blog.update(blog_params)
-            redirect_to @blog
-          else
-            render :edit
-          end
-      else
-        redirect_to sign_in_path
-      end
-    end
-
-    def destroy
-      if Current.user
-        @blog = Current.user.blogs.where(id: params[:id]).first
-
-          if !@blog.nil? && @blog.destroy
-            redirect_to blogs_path
-          elsif @blog
-            redirect_to @blog
-          else
-            redirect_to root_path 
-          end
-      else
-        redirect_to sign_in_path
-      end
-    end
-
-    private
-
-    def blog_params
-      params.require(:blog).permit(:title, :body)
+    else
+      log_in
     end
   end
+
+  def edit
+    if Current.user
+      blog = Current.user.blogs.where(id: params[:id]).first
+      if @blog.nil?
+        redirect_to root_path
+      end
+    else
+      log_in  
+    end
+  end
+
+  def update
+    if Current.user
+      @blog = Current.user.blogs.where(id: params[:id]).first
+      if !@blog.nil? && @blog.update(blog_params)
+        redirect_to @blog
+      else
+        render :edit
+      end
+    else
+      log_in
+    end
+  end
+
+  def destroy
+    if Current.user
+      @blog = Current.user.blogs.where(id: params[:id]).first
+
+      if !@blog.nil? && @blog.destroy
+        redirect_to blogs_path
+      elsif @blog
+        redirect_to @blog
+      else
+        redirect_to root_path 
+      end
+    else
+      log_in
+    end
+  end
+
+  private
+
+  def blog_params
+    params.require(:blog).permit(:title, :body)
+  end
+end

@@ -2,11 +2,12 @@ class ApplicationController < ActionController::Base
   before_action :set_current_user
 
   def set_current_user
-    if session[:user_id]
-      user=User.where(id: session[:user_id]).first
-      if user
-        Current.user = user
-      end
+    if current_user
+      Current.user =current_user
     end
   end
+
+  def log_in
+    redirect_to new_user_session_path 
+  end 
 end
