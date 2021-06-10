@@ -7,18 +7,14 @@ class RegistrationsController < ApplicationController
   end
 
   def validateuser
-    user = User.where(email: params[:email])
+    user = User.where(email: params[:email]).first
 
-    if user
-      user = user.first 
-      if  user.present? && user.authenticate(params[:password])
-        session[:user_id] = user.id
-        flash[:alert] = nil
-        redirect_to blogs_path
-      else
-        flash[:alert] = "Invalid Email or Password"
-        render :sighnin
-      end
+    if user &&  user.authenticate(params[:password])
+      session[:user_id] = user.id
+      redirect_to blogs_path
+    else
+      flash[:alert] = "Invalid Email or Password"
+      render :sighnin
     end
   end
 
@@ -31,14 +27,17 @@ class RegistrationsController < ApplicationController
     if @user.save
       session[:user_id] = @user.id
       #redirect_to user_blogs_path @user
+      flash[:notice] = "Signed Up Successfully"
       redirect_to blogs_path
     else
+      flash[:alert] = "Some Error occured. Please retry!!"
       render :new
     end
   end
 
   def destroy 
     session[:user_id] = nil
+    flash[:notice] = "Signed out Successfully"
     redirect_to root_path
   end
 

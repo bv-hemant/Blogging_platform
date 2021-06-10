@@ -1,12 +1,13 @@
 class BlogsController < ApplicationController 
   def all_blogs
-    @blog = Blog.all
+    @blogs ||= Blog.all
   end
 
   def index
     if !Current.user.nil?
-      @blog = Current.user.blogs.all
+      @blogs = Current.user.blogs.all
     else 
+      flash[:alert] = "Please Login First"
       redirect_to sign_in_path
     end
   end
@@ -14,7 +15,7 @@ class BlogsController < ApplicationController
   def show
     @blog=Blog.where(id: params[:id]).first
     if @blog.nil?
-      flash[:alert]="No blogs"
+      flash[:alert]="No blog found"
       redirect_to root_path
     end
   end
@@ -23,60 +24,75 @@ class BlogsController < ApplicationController
     if Current.user
       @blog = Blog.new
     else 
+      flash[:alert] = "Please Login First"
       redirect_to sign_in_path
     end
   end
 
-    def create
-      if Current.user
-        @blog = Current.user.blogs.new(blog_params)
-
-        if @blog.save
-          redirect_to @blog
-        else
-          render :new
-        end
+  def create
+    if Current.user
+      @blog = Current.user.blogs.new(blog_params)
+      if @blog.save
+        flash[:notice] = "SuccessFully merged"
+        redirect_to @blog
       else
-        redirect_to sign_in_path
+        flash[:alert] = "An error occured while saving Blog."
+        render :new
       end
+    else
+      flash[:alert] = "Please Login First"
+      redirect_to sign_in_path
     end
+  end
 
-    def edit
-      if Current.user
-        blog = Current.user.blogs.where(id: params[:id]).first
-        if @blog.nil?
-          redirect_to root_path
-        end
-      else
-        redirect_to sign_in_path  
+  def edit
+    if Current.user
+      @blog = Current.user.blogs.where(id: params[:id]).first
+      if @blog.nil?
+        flash[:alert] = "No blog found" 
+        redirect_to root_path
       end
+    else
+      flash[:alert] = "Please Login First"
+      redirect_to sign_in_path
     end
+  end
 
     def update
       if Current.user
         @blog = Current.user.blogs.where(id: params[:id]).first
-          if !@blog.nil? && @blog.update(blog_params)
-            redirect_to @blog
-          else
-            render :edit
-          end
+        if !@blog.nil? && @blog.update(blog_params)
+          flash[:notice] = "Successfully Updated"
+          redirect_to @blog
+        elsif @blog
+          flash[:alert] = "An Error Occured while Updating. Please retry!!"
+          render :edit
+        else
+          flash[:alert] = "No Blog Found"
+          redirect_to root_path
+        end
       else
+        flash[:alert] = "Please Login First"
         redirect_to sign_in_path
       end
     end
 
+
     def destroy
       if Current.user
         @blog = Current.user.blogs.where(id: params[:id]).first
-
-          if !@blog.nil? && @blog.destroy
-            redirect_to blogs_path
-          elsif @blog
-            redirect_to @blog
-          else
-            redirect_to root_path 
-          end
+        if !@blog.nil? && @blog.destroy
+          flash[:notice] = "Successfully Deleted"
+          redirect_to blogs_path
+        elsif @blog
+          flash[:alert] = "An error Occured. Please retry !! "
+          redirect_to @blog
+        else
+          flash[:alert] = "No blog found"
+          redirect_to root_path 
+        end
       else
+        flash[:alert] = "Please Login First"
         redirect_to sign_in_path
       end
     end
