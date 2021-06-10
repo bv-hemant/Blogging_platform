@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   end
 
   def log_in
+    flash[:alert] = "Please Login First"
     redirect_to new_user_session_path 
   end 
 end
