@@ -31,7 +31,7 @@ class BlogsController < ApplicationController
 
   def create
     if Current.user
-      @blog = Current.user.blogs.new(blog_params)
+      @blog = Blog.new(title: params[:blog][:title], body: params[:blog][:body],user_id: Current.user.id)
       if @blog.save
         flash[:notice] = "SuccessFully merged"
         redirect_to @blog
