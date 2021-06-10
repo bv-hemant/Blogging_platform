@@ -1,73 +1,105 @@
 class BlogsController < ApplicationController 
-    def index
-        #@user = User.find_by(id:params[:user_id])
-        if(session[:user_id])
-            @user = User.find_by(id:session[:user_id])
-            @blog = @user.blogs.all
-        end
-    end
-
-    def show
-        @blog=Blog.find_by(id: params[:id])
-    end
-
-    def new
-      @blog = Blog.new
-    end
-
-    def create
-        if(session[:user_id])
-            @user = User.find_by(id:session[:user_id])
-            @blog = @user.blogs.new(blog_params)
-
-            if @blog.save
-                redirect_to @blog
-            end
-      #redirect_to user_blogs_path
-        else
-          render :new
-        end
-    end
-
-    def edit
-        if(session[:user_id])
-            @user = User.find_by(id:session[:user_id])
-            @blog = @user.blogs.find_by(id:params[:id])
-    end
-    #@blog = Blog.find(params[:id])
-    
+  def all_blogs
+    @blogs ||= Blog.all
   end
-    
-    def update
-        @user = User.find_by(id:session[:user_id])
-        @blog = @user.blogs.find_by(id:params[:id])
 
-        if !@blog.nil? && @blog.update(blog_params)
-            redirect_to @blog
-        #redirect_to user_blog_path
-        else
-            render :edit
-        end
+  def index
+    if !Current.user.nil?
+      @blogs = Current.user.blogs.all
+    else 
+      flash[:alert] = "Please Login First"
+      redirect_to sign_in_path
     end
+  end
+
+  def show
+    @blog=Blog.where(id: params[:id]).first
+    if @blog.nil?
+      flash[:alert]="No blog found"
+      redirect_to root_path
+    end
+  end
+
+  def new
+    if Current.user
+      @blog = Blog.new
+    else 
+      flash[:alert] = "Please Login First"
+      redirect_to sign_in_path
+    end
+  end
+
+  def create
+    if Current.user
+      @blog = Blog.new(title: params[:blog][:title], body: params[:blog][:body],user_id: Current.user.id)
+      if @blog.save
+        flash[:notice] = "SuccessFully merged"
+        redirect_to @blog
+      else
+        flash[:alert] = "An error occured while saving Blog."
+        render :new
+      end
+    else
+      flash[:alert] = "Please Login First"
+      redirect_to sign_in_path
+    end
+  end
+
+  def edit
+    if Current.user
+      @blog = Current.user.blogs.where(id: params[:id]).first
+      if @blog.nil?
+        flash[:alert] = "No blog found" 
+        redirect_to root_path
+      end
+    else
+      flash[:alert] = "Please Login First"
+      redirect_to sign_in_path
+    end
+  end
+
+    def update
+      if Current.user
+        @blog = Current.user.blogs.where(id: params[:id]).first
+        if !@blog.nil? && @blog.update(blog_params)
+          flash[:notice] = "Successfully Updated"
+          redirect_to @blog
+        elsif @blog
+          flash[:alert] = "An Error Occured while Updating. Please retry!!"
+          render :edit
+        else
+          flash[:alert] = "No Blog Found"
+          redirect_to root_path
+        end
+      else
+        flash[:alert] = "Please Login First"
+        redirect_to sign_in_path
+      end
+    end
+
 
     def destroy
-        @user = User.find_by(id:session[:user_id])
-        @blog = @user.blogs.find_by(id:params[:id])
-        if !@blog.nil?
-            @blog.destroy
-            redirect_to blogs_path
+      if Current.user
+        @blog = Current.user.blogs.where(id: params[:id]).first
+        if !@blog.nil? && @blog.destroy
+          flash[:notice] = "Successfully Deleted"
+          redirect_to blogs_path
+        elsif @blog
+          flash[:alert] = "An error Occured. Please retry !! "
+          redirect_to @blog
         else
-            redirect_to Blog.find_by(id: params[:id])
+          flash[:alert] = "No blog found"
+          redirect_to root_path 
         end
+      else
+        flash[:alert] = "Please Login First"
+        redirect_to sign_in_path
+      end
     end
 
     private
 
     def blog_params
-        params.require(:blog).permit(:title, :body)
+      params.require(:blog).permit(:title, :body)
     end
-    
-    def get_blog(id)
-        @blog = Blog.find(id)
-    end
-end
+  end

@@ -1,24 +1,40 @@
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
+    <% link_to "Blogs" ,root_path, class: "navbar-brand" %>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
+          <%= link_to "Home", root_path,class: "nav-link active" %>
+          <!--<a class="nav-link active" aria-current="page" href="#">Home</a>-->
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          <% if Current.user %>
+            <%= link_to "Your Blogs",blogs_path, class: "nav-link" %>
+          <% end %>
         </li>
       </ul>
+
+      <ul class = "navbar-nav ms-auto mb-2 mb-lg-0">
+        <% if Current.user %>
+          <li class = "nav-item">
+            <span> <%= Current.user.email %></span>
+          </li>
+          <li class = "nav-item">
+            <%= link_to "Sign Out", sign_out_path, method: :delete, class: "nav-link" %>
+          </li>
+        <% else %>
+          <li class = "nva-item">
+            <%= link_to "Sign In", sign_in_path, class: "nav-link" %>
+          </li>
+          <li class = "nva-item">
+            <%= link_to "Sign Up", sign_up_path, class: "nav-link" %>
+          </li>
+        <% end %>
+      </ul> 
     </div>
   </div>
 </nav>
