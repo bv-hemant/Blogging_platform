@@ -4,8 +4,8 @@ class BlogsController < ApplicationController
   end
 
   def index
-    if !Current.user.nil?
-      @blogs = Current.user.blogs.all
+    if !current_user.nil?
+      @blogs ||= current_user.blogs.all
     else 
       log_in
     end
@@ -20,7 +20,7 @@ class BlogsController < ApplicationController
   end
 
   def new
-    if Current.user
+    if current_user
       @blog = Blog.new
     else 
       log_in
@@ -28,8 +28,8 @@ class BlogsController < ApplicationController
   end
 
   def create
-    if Current.user
-      @blog = Blog.new(title: params[:blog][:title], body: params[:blog][:body],user_id: Current.user.id)
+    if current_user
+      @blog = Blog.new(title: params[:blog][:title], body: params[:blog][:body],user_id: current_user.id)
       if @blog.save
         flash[:notice] = "SuccessFully merged"
         redirect_to @blog
@@ -43,8 +43,8 @@ class BlogsController < ApplicationController
   end
 
   def edit
-    if Current.user
-      @blog = Current.user.blogs.where(id: params[:id]).first
+    if current_user
+      @blog = Blog.where(id: params[:id],user_id: current_user.id).first
       if @blog.nil?
         flash[:alert] = "No blog found" 
         redirect_to root_path
@@ -55,8 +55,8 @@ class BlogsController < ApplicationController
   end
 
   def update
-    if Current.user
-      @blog = Current.user.blogs.where(id: params[:id]).first
+    if current_user
+      @blog = Blog.where(id: params[:id], user_id: current_user.id).first
       if !@blog.nil? && @blog.update(blog_params)
         flash[:notice] = "Successfully Updated"
         redirect_to @blog
@@ -73,8 +73,8 @@ class BlogsController < ApplicationController
   end
 
   def destroy
-    if Current.user
-      @blog = Current.user.blogs.where(id: params[:id]).first
+    if current_user
+      @blog = Blog.where(id: params[:id], user_id: current_user.id).first
       if !@blog.nil? && @blog.destroy
         flash[:notice] = "Successfully Deleted"
         redirect_to blogs_path
