@@ -27,6 +27,9 @@
             <%= link_to "Sign Out", destroy_user_session_path, method: :delete, class: "nav-link" %>
           </li>
         <% else %>
+          <li class="nav-item">
+            <%link_to "Sign in with google",new_user_session_path %>
+          </li>
           <li class = "nva-item">
             <%= link_to "Sign In", new_user_session_path, class: "nav-link" %>
           </li>
