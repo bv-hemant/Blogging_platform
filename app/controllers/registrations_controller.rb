@@ -8,7 +8,6 @@ class RegistrationsController < ApplicationController
 
   def validateuser
     user = User.where(email: params[:email]).first
-
     if user &&  user.authenticate(params[:password])
       session[:user_id] = user.id
       redirect_to blogs_path
