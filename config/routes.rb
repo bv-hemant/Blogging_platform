@@ -1,10 +1,11 @@
 Rails.application.routes.draw do
+  devise_for :users
   root "blogs#all_blogs" 
-  get "sign_in", to: "registrations#sighnin" 
-  post "sign_in", to: "registrations#validateuser"
-  get "sign_up", to: "registrations#new" 
-  post "sign_up", to: "registrations#create" 
-  delete "sign_out", to: "registrations#destroy"
+  #get "sign_in", to: "registrations#sighnin" 
+  #post "sign_in", to: "registrations#validateuser"
+  # get "sign_up", to: "registrations#new" 
+  # post "sign_up", to: "registrations#create" 
+  # delete "sign_out", to: "registrations#destroy"
 
   #resources :users do 
   resources :blogs 
