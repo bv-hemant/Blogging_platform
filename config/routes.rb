@@ -1,13 +1,11 @@
 Rails.application.routes.draw do
-  devise_for :admin_users, ActiveAdmin::Devise.config
+  devise_config = ActiveAdmin::Devise.config
+  devise_config[:controllers][:omniauth_callbacks] = 'omniauth_callbacks'
+  devise_for :admin_users, devise_config
+
   ActiveAdmin.routes(self)
   devise_for :users
-  root "blogs#all_blogs" 
-  #get "sign_in", to: "registrations#sighnin" 
-  #post "sign_in", to: "registrations#validateuser"
-  # get "sign_up", to: "registrations#new" 
-  # post "sign_up", to: "registrations#create" 
-  # delete "sign_out", to: "registrations#destroy"
+  root "blogs#all_blogs"
 
   #resources :users do 
   resources :blogs 
